@@ -815,8 +815,12 @@ namespace WindowsFormsApp1
             }
             if (Double.IsNaN(double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture)))
             {
-
+                stopAllAndUpdate();
+                disableAllButton();
+                mainTextBox.Text = "ERROR: Math error.";
+                return;
             }
+            ans = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
         }
 
         private void BUTTON_POW_Click(object sender, EventArgs e)

@@ -1059,7 +1059,7 @@ namespace WindowsFormsApp1
         {
             if (ans != default(double))
             {
-                mainTextBox.Text += ans.ToString(CultureInfo.InvariantCulture);
+                mainTextBox.Text = ans.ToString(CultureInfo.InvariantCulture);
             }
         }
     }

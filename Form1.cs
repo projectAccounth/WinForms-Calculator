@@ -23,7 +23,7 @@ namespace WindowsFormsApp1
             InitializeComponent();
 
             functionButtons = new List<Button>{
-                BUTTON_NEGATE,
+                // BUTTON_NEGATE,
                 BUTTON_TAN,
                 BUTTON_ATAN,
                 BUTTON_SINE,
@@ -31,7 +31,9 @@ namespace WindowsFormsApp1
                 BUTTON_ACOS,
                 BUTTON_COS,
                 BUTTON_SQRT,
-                BUTTON_C
+                BUTTON_C,
+                BUTTON_LOG,
+                BUTTON_LN
             };
 
             operationButtons = new List<Button>
@@ -39,12 +41,23 @@ namespace WindowsFormsApp1
                 BUTTON_ADD,
                 BUTTON_SUBTRACT,
                 BUTTON_DIVIDE,
-                BUTTON_MULTIPLY,     
+                BUTTON_MULTIPLY,
             };
         }
 
+        private double logBaseN(double logBase, double input)
+        {
+            return Math.Log(input) / Math.Log(logBase);
+        }
+
+        
+
         string functionName = "None";
 
+        const double pi = 3.14159265358979323846264338327;
+
+        // I could've used a string named "operationName" but i fucked up
+        // and ended up using these
         bool onAdding = false;
 
         bool onSubtract = false;
@@ -57,11 +70,17 @@ namespace WindowsFormsApp1
 
         bool onFunctionUse = false;
 
+
+        // indicates whether you use radian or not
         bool usesRad = true;
 
-        double previousInput = 0;
-        
 
+        // value to store the previous buffer
+        double previousInput = 0;
+        // ans != previousInput
+        double ans = default(double);
+
+        // set all values to False
         private void stopAllAction()
         {
             onAdding = false;
@@ -76,9 +95,24 @@ namespace WindowsFormsApp1
 
             onFunctionUse = false;
         }
+        // my laziness made me make this
+        private bool invertBool(bool b)
+        {
+            if (b)
+                return false;
+            else
+                return true;
+        }
 
-        
+        private void updateCurrentAngleUnit()
+        {
+            if (usesRad)
+                ANGLE_INDICATOR.Text = "Currently using: Radian";
+            else
+                ANGLE_INDICATOR.Text = "Currently using: Degree";
+        }
 
+        // update action text, indicating what operation we're using
         private void updateActionText()
         {
             if (onAdding)
@@ -92,7 +126,7 @@ namespace WindowsFormsApp1
             else if (onPow)
                 currentActionText.Text = "Current action: Power";
             else if (onFunctionUse)
-                currentActionText.Text = "Current action: using Functions" + Convert.ToString(onFunctionUse);
+                currentActionText.Text = "Current action: using Functions " + $"({functionName})";
             else currentActionText.Text = "Current action: None";
         }
 
@@ -103,7 +137,7 @@ namespace WindowsFormsApp1
             previousInput = 0;
             prevInputBox.Text = "";
         }
-        
+
         private void disableAllButton()
         {
             stopAllAndUpdate();
@@ -134,7 +168,7 @@ namespace WindowsFormsApp1
             stopAllAndUpdate();
             foreach (Control control in this.Controls)
                 if (control is Button btn)
-                    btn.Enabled = true; ;
+                    btn.Enabled = true;
         }
 
 
@@ -143,7 +177,7 @@ namespace WindowsFormsApp1
             TypeConverter converter = TypeDescriptor.GetConverter(type);
             return converter.IsValid(value);
         }
-        
+
         private void clearTextBox(TextBox boxToClear)
         {
             boxToClear.Text = "";
@@ -210,6 +244,7 @@ namespace WindowsFormsApp1
         private void BUTTON_AC_Click(object sender, EventArgs e)
         {
             enableAllButton();
+            ans = default;
         }
 
         private void BUTTON_ADD_Click(object sender, EventArgs e)
@@ -339,29 +374,36 @@ namespace WindowsFormsApp1
                 mainTextBox.Text = "";
             }
         }
-        
+
         private void BUTTON_NEGATE_Click(object sender, EventArgs e)
         {
-            try
+            // logic handling on function use
+            if (!onFunctionUse)
             {
-                // had to throw everything in a try catch because user input is unpredictable
-                double result = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+                try
+                {
+                    // had to throw everything in a try catch because user input is unpredictable
+                    double result = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+                }
+                catch (FormatException)
+                {
+                    // resets the calculator and throw a syntax error
+                    stopAllAndUpdate();
+                    mainTextBox.Text = "ERROR: Syntax error.";
+                    disableAllButton();
+                    return;
+                }
+                if (mainTextBox.Text != "")
+                {
+                    double negatedInput = 0;
+                    negatedInput = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+                    negatedInput = -negatedInput;
+                    mainTextBox.Text = negatedInput.ToString(CultureInfo.InvariantCulture);
+                    return;
+                }
             }
-            catch (FormatException)
-            {
-                // resets the calculator and throw a syntax error
-                stopAllAndUpdate();
-                mainTextBox.Text = "ERROR: Syntax error.";
-                disableAllButton();
-                return;
-            }
-            if (mainTextBox.Text != "")
-            {
-                double negatedInput = 0;
-                negatedInput = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
-                negatedInput = -negatedInput;
-                mainTextBox.Text = negatedInput.ToString(CultureInfo.InvariantCulture);
-            }
+            mainTextBox.Text += "-";
+            return;
         }
 
         private void BUTTON_EQUAL_Click(object sender, EventArgs e)
@@ -507,7 +549,15 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= pi / 180;
+                            }
+
                             finalOutput = Math.Tan(finalOutput);
+
+
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -533,7 +583,14 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+
                             finalOutput = Math.Atan(finalOutput);
+
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= 180 / pi;
+                            }
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -559,7 +616,15 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= finalOutput *= pi / 180;
+                            }
+
                             finalOutput = Math.Sin(finalOutput);
+
+
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -585,7 +650,14 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+
                             finalOutput = Math.Asin(finalOutput);
+
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= 180 / pi;
+                            }
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -611,7 +683,15 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= pi / 180;
+                            }
+
                             finalOutput = Math.Cos(finalOutput);
+
+
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -637,7 +717,14 @@ namespace WindowsFormsApp1
                                 break;
                             };
 
+
                             finalOutput = Math.Acos(finalOutput);
+
+                            // check whether radian or degree is used
+                            if (!usesRad)
+                            {
+                                finalOutput *= 180 / pi;
+                            }
 
                             mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
 
@@ -648,8 +735,72 @@ namespace WindowsFormsApp1
 
                             break;
                         }
+                    case "log":
+                        {
+                            // the output after the operation
+                            double finalOutput = 0;
+                            // when the equal button is pressed, quickly omit sqrt to get the number needed to perform operations
+                            // i was lazy so i did this
+                            mainTextBox.Text = mainTextBox.Text.Replace("log ", string.Empty);
+                            // a tryparse to indicate whether the input number was gibberish (empty as well) or valid
+                            if (!double.TryParse(mainTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out finalOutput))
+                            {
+                                // resets the calculator and indicates an error
+                                disableAllButton();
+                                stopAllAndUpdate();
+                                // useless function call btw
+                                clearTextBox(prevInputBox);
+
+                                mainTextBox.Text = "ERROR: Unknown error.";
+                                break;
+                            };
+
+                            // calculate the final output
+                            finalOutput = Math.Log10(finalOutput);
+                            // use toString with invariantCulture
+                            mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
+                            // literally resets the state of the calculator
+                            stopAllAndUpdate();
+                            enableButtonList(functionButtons);
+
+                            functionName = "None";
+
+                            break;
+                        }
+                    case "ln":
+                        {
+                            // the output after the operation
+                            double finalOutput = 0;
+                            // when the equal button is pressed, quickly omit sqrt to get the number needed to perform operations
+                            // i was lazy so i did this
+                            mainTextBox.Text = mainTextBox.Text.Replace("ln ", string.Empty);
+                            // a tryparse to indicate whether the input number was gibberish (empty as well) or valid
+                            if (!double.TryParse(mainTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out finalOutput))
+                            {
+                                // resets the calculator and indicates an error
+                                disableAllButton();
+                                stopAllAndUpdate();
+                                // useless function call btw
+                                clearTextBox(prevInputBox);
+
+                                mainTextBox.Text = "ERROR: Unknown error.";
+                                break;
+                            };
+
+                            // calculate the final output
+                            finalOutput = Math.Log(finalOutput);
+                            // use toString with invariantCulture
+                            mainTextBox.Text = finalOutput.ToString(CultureInfo.InvariantCulture);
+                            // literally resets the state of the calculator
+                            stopAllAndUpdate();
+                            enableButtonList(functionButtons);
+
+                            functionName = "None";
+
+                            break;
+                        }
                 }
-                onFunctionUse = false;               
+                onFunctionUse = false;
                 return;
             }
 
@@ -661,6 +812,10 @@ namespace WindowsFormsApp1
                 stopAllAndUpdate();
                 disableAllButton();
                 return;
+            }
+            if (Double.IsNaN(double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture)))
+            {
+
             }
         }
 
@@ -708,7 +863,10 @@ namespace WindowsFormsApp1
                     switch (functionName)
                     {
                         // handle functions with 4 letters
-                        case "sqrt": case "atan": case "asin": case "acos":
+                        case "sqrt":
+                        case "atan":
+                        case "asin":
+                        case "acos":
                             {
                                 // this will check whether the user has entered something or not, if 
                                 // the user entered something it will delete the last character that the user entered
@@ -728,7 +886,10 @@ namespace WindowsFormsApp1
                                 }
                                 break;
                             }
-                        case "sin": case "cos": case "tan":
+                        case "log":
+                        case "sin":
+                        case "cos":
+                        case "tan":
                             {
                                 // this will check whether the user has entered something or not, if 
                                 // the user entered something it will delete the last character that the user entered
@@ -748,19 +909,40 @@ namespace WindowsFormsApp1
                                 }
                                 break;
                             }
+                        case "ln":
+                            {
+                                // this will check whether the user has entered something or not, if 
+                                // the user entered something it will delete the last character that the user entered
+                                if (mainTextBox.Text.Length != 3)
+                                {
+                                    mainTextBox.Text = mainTextBox.Text.Remove(mainTextBox.Text.Length - 1);
+                                    break;
+                                }
+                                // a for loop to delete the function name (with space, as the functions are written as
+                                // "func "), and also to generalize btw
+                                for (int i = 2; i >= 0; --i)
+                                {
+                                    mainTextBox.Text = mainTextBox.Text.Remove(i);
+                                    // after deleting the function, resets the calculator and reenable all function buttons
+                                    stopAllAndUpdate();
+                                    enableButtonList(functionButtons);
+                                }
+                                break;
+                            }
                     }
-                } else
+                }
+                else
                     // if you're not using a function then this will remove the last character you entered
                     mainTextBox.Text = mainTextBox.Text.Remove(mainTextBox.Text.Length - 1);
-            }            
+            }
         }
 
         private void BUTTON_SQRT_Click(object sender, EventArgs e)
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "sqrt";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "sqrt ";
         }
@@ -769,8 +951,8 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "tan";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "tan ";
         }
@@ -779,8 +961,8 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "atan";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "atan ";
         }
@@ -789,8 +971,8 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "sin";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "sin ";
         }
@@ -799,8 +981,8 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "asin";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "asin ";
         }
@@ -809,8 +991,8 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "cos";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "cos ";
         }
@@ -819,10 +1001,54 @@ namespace WindowsFormsApp1
         {
             stopAllAndUpdate();
             onFunctionUse = true;
-            updateActionText();
             functionName = "acos";
+            updateActionText();
             disableButtonList(functionButtons);
             mainTextBox.Text = "acos ";
+        }
+
+        private void DEG_RAD_TOGGLE_Click(object sender, EventArgs e)
+        {
+            usesRad = invertBool(usesRad);
+            updateCurrentAngleUnit();
+        }
+
+        private void BUTTON_LOG_Click(object sender, EventArgs e)
+        {
+            stopAllAndUpdate();
+            onFunctionUse = true;
+            functionName = "log";
+            updateActionText();
+            disableButtonList(functionButtons);
+            mainTextBox.Text = "log ";
+        }
+
+        private void BUTTON_LN_Click(object sender, EventArgs e)
+        {
+            stopAllAndUpdate();
+            onFunctionUse = true;
+            functionName = "ln";
+            updateActionText();
+            disableButtonList(functionButtons);
+            mainTextBox.Text = "ln ";
+        }
+
+        private void BUTTON_CONST_PI_Click(object sender, EventArgs e)
+        {
+            mainTextBox.Text += pi.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void BUTTON_CONST_E_Click(object sender, EventArgs e)
+        {
+            mainTextBox.Text += Math.E.ToString(CultureInfo.InvariantCulture);
+        }
+
+        private void BUTTON_ANS_Click(object sender, EventArgs e)
+        {
+            if (ans != default(double))
+            {
+                mainTextBox.Text += ans.ToString(CultureInfo.InvariantCulture);
+            }
         }
     }
 }

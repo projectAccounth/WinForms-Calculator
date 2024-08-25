@@ -60,6 +60,12 @@
             this.BUTTON_POW = new System.Windows.Forms.Button();
             this.BUTTON_BKSP = new System.Windows.Forms.Button();
             this.DEG_RAD_TOGGLE = new System.Windows.Forms.Button();
+            this.ANGLE_INDICATOR = new System.Windows.Forms.Label();
+            this.BUTTON_LOG = new System.Windows.Forms.Button();
+            this.BUTTON_LN = new System.Windows.Forms.Button();
+            this.BUTTON_CONST_PI = new System.Windows.Forms.Button();
+            this.BUTTON_CONST_E = new System.Windows.Forms.Button();
+            this.BUTTON_ANS = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // button1
@@ -408,12 +414,83 @@
             this.DEG_RAD_TOGGLE.TabIndex = 33;
             this.DEG_RAD_TOGGLE.Text = "deg / rad";
             this.DEG_RAD_TOGGLE.UseVisualStyleBackColor = true;
+            this.DEG_RAD_TOGGLE.Click += new System.EventHandler(this.DEG_RAD_TOGGLE_Click);
+            // 
+            // ANGLE_INDICATOR
+            // 
+            this.ANGLE_INDICATOR.AutoSize = true;
+            this.ANGLE_INDICATOR.Location = new System.Drawing.Point(230, 8);
+            this.ANGLE_INDICATOR.Name = "ANGLE_INDICATOR";
+            this.ANGLE_INDICATOR.Size = new System.Drawing.Size(116, 13);
+            this.ANGLE_INDICATOR.TabIndex = 34;
+            this.ANGLE_INDICATOR.Text = "Currently using: Radian";
+            // 
+            // BUTTON_LOG
+            // 
+            this.BUTTON_LOG.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.BUTTON_LOG.Location = new System.Drawing.Point(12, 266);
+            this.BUTTON_LOG.Name = "BUTTON_LOG";
+            this.BUTTON_LOG.Size = new System.Drawing.Size(45, 34);
+            this.BUTTON_LOG.TabIndex = 35;
+            this.BUTTON_LOG.Text = "log";
+            this.BUTTON_LOG.UseVisualStyleBackColor = true;
+            this.BUTTON_LOG.Click += new System.EventHandler(this.BUTTON_LOG_Click);
+            // 
+            // BUTTON_LN
+            // 
+            this.BUTTON_LN.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.BUTTON_LN.Location = new System.Drawing.Point(53, 266);
+            this.BUTTON_LN.Name = "BUTTON_LN";
+            this.BUTTON_LN.Size = new System.Drawing.Size(39, 34);
+            this.BUTTON_LN.TabIndex = 37;
+            this.BUTTON_LN.Text = "ln";
+            this.BUTTON_LN.UseVisualStyleBackColor = true;
+            this.BUTTON_LN.Click += new System.EventHandler(this.BUTTON_LN_Click);
+            // 
+            // BUTTON_CONST_PI
+            // 
+            this.BUTTON_CONST_PI.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
+            this.BUTTON_CONST_PI.Location = new System.Drawing.Point(214, 68);
+            this.BUTTON_CONST_PI.Name = "BUTTON_CONST_PI";
+            this.BUTTON_CONST_PI.Size = new System.Drawing.Size(33, 34);
+            this.BUTTON_CONST_PI.TabIndex = 38;
+            this.BUTTON_CONST_PI.Text = "π";
+            this.BUTTON_CONST_PI.UseVisualStyleBackColor = true;
+            this.BUTTON_CONST_PI.Click += new System.EventHandler(this.BUTTON_CONST_PI_Click);
+            // 
+            // BUTTON_CONST_E
+            // 
+            this.BUTTON_CONST_E.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F);
+            this.BUTTON_CONST_E.Location = new System.Drawing.Point(244, 68);
+            this.BUTTON_CONST_E.Name = "BUTTON_CONST_E";
+            this.BUTTON_CONST_E.Size = new System.Drawing.Size(33, 34);
+            this.BUTTON_CONST_E.TabIndex = 39;
+            this.BUTTON_CONST_E.Text = "e";
+            this.BUTTON_CONST_E.UseVisualStyleBackColor = true;
+            this.BUTTON_CONST_E.Click += new System.EventHandler(this.BUTTON_CONST_E_Click);
+            // 
+            // BUTTON_ANS
+            // 
+            this.BUTTON_ANS.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F);
+            this.BUTTON_ANS.Location = new System.Drawing.Point(94, 266);
+            this.BUTTON_ANS.Name = "BUTTON_ANS";
+            this.BUTTON_ANS.Size = new System.Drawing.Size(45, 34);
+            this.BUTTON_ANS.TabIndex = 40;
+            this.BUTTON_ANS.Text = "ans";
+            this.BUTTON_ANS.UseVisualStyleBackColor = true;
+            this.BUTTON_ANS.Click += new System.EventHandler(this.BUTTON_ANS_Click);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(358, 306);
+            this.Controls.Add(this.BUTTON_ANS);
+            this.Controls.Add(this.BUTTON_CONST_E);
+            this.Controls.Add(this.BUTTON_CONST_PI);
+            this.Controls.Add(this.BUTTON_LN);
+            this.Controls.Add(this.BUTTON_LOG);
+            this.Controls.Add(this.ANGLE_INDICATOR);
             this.Controls.Add(this.DEG_RAD_TOGGLE);
             this.Controls.Add(this.BUTTON_BKSP);
             this.Controls.Add(this.BUTTON_POW);
@@ -489,6 +566,12 @@
         private System.Windows.Forms.Button BUTTON_POW;
         private System.Windows.Forms.Button BUTTON_BKSP;
         private System.Windows.Forms.Button DEG_RAD_TOGGLE;
+        private System.Windows.Forms.Label ANGLE_INDICATOR;
+        private System.Windows.Forms.Button BUTTON_LOG;
+        private System.Windows.Forms.Button BUTTON_LN;
+        private System.Windows.Forms.Button BUTTON_CONST_PI;
+        private System.Windows.Forms.Button BUTTON_CONST_E;
+        private System.Windows.Forms.Button BUTTON_ANS;
     }
 }
 

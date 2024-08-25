@@ -410,7 +410,13 @@ namespace WindowsFormsApp1
         {
             // check whether the previous input is empty and is not using a func
             if (previousInput == 0 && !onFunctionUse)
+            {
+                if (mainTextBox.Text != String.Empty)
+                {
+                    ans = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+                }
                 return;
+            }
             // check if there's something in the main input box
             if (mainTextBox.Text == "")
                 return;
@@ -890,6 +896,7 @@ namespace WindowsFormsApp1
                                 }
                                 break;
                             }
+                        // handle functions with 3 letters
                         case "log":
                         case "sin":
                         case "cos":
@@ -913,6 +920,7 @@ namespace WindowsFormsApp1
                                 }
                                 break;
                             }
+                        // handle functions with 2 letters
                         case "ln":
                             {
                                 // this will check whether the user has entered something or not, if 

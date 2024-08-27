@@ -8,9 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using WindowsFormsApp1.Properties;
+using Calculator.Properties;
 
-namespace WindowsFormsApp1
+namespace Calculator
 {
     public partial class Form1 : Form
     {
@@ -103,7 +103,7 @@ namespace WindowsFormsApp1
             else
                 return true;
         }
-
+        
         private void updateCurrentAngleUnit()
         {
             if (usesRad)
@@ -413,7 +413,13 @@ namespace WindowsFormsApp1
             {
                 if (mainTextBox.Text != String.Empty)
                 {
-                    ans = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+                    if (!double.TryParse(mainTextBox.Text, NumberStyles.Any, CultureInfo.InvariantCulture, out ans))
+                    {
+                        stopAllAndUpdate();
+                        mainTextBox.Text = "ERROR: Syntax error.";
+                        disableAllButton();
+                        return;
+                    }
                 }
                 return;
             }
@@ -807,7 +813,6 @@ namespace WindowsFormsApp1
                         }
                 }
                 onFunctionUse = false;
-                return;
             }
 
 
@@ -827,6 +832,7 @@ namespace WindowsFormsApp1
                 return;
             }
             ans = double.Parse(mainTextBox.Text, CultureInfo.InvariantCulture);
+            return;
         }
 
         private void BUTTON_POW_Click(object sender, EventArgs e)
@@ -1059,8 +1065,34 @@ namespace WindowsFormsApp1
         {
             if (ans != default(double))
             {
-                mainTextBox.Text = ans.ToString(CultureInfo.InvariantCulture);
+                if (!onFunctionUse)
+                    mainTextBox.Text = ans.ToString(CultureInfo.InvariantCulture);
+                mainTextBox.Text += ans.ToString(CultureInfo.InvariantCulture);
+                return;
             }
         }
+        // Exit button in the Others section (alternative to the X button)
+        private void menuItem5_Click(object sender, EventArgs e)
+        {
+            if (System.Windows.Forms.Application.MessageLoop)
+            {
+                // WinForms app
+                System.Windows.Forms.Application.Exit();
+            }
+            else
+            {
+                // Console app
+                System.Environment.Exit(1);
+            }
+        }
+        
+        private void menuItem4_Click(object sender, EventArgs e)
+        {
+
+            Form2 newForm = new Form2();
+            newForm.ShowDialog();
+
+            return;
+        }       
     }
 }
